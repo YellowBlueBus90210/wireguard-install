@@ -107,7 +107,6 @@ function installQuestions() {
 	echo ""
     echo "Please enter the name of the server. This will be used in the naming of output files."
     read -rp "Server name: " -e SERVER_NAME
-    echo "SERVER_NAME=${SERVER_NAME}" > /etc/wireguard/server_name.conf
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can keep the default options and just press enter if you are ok with them."
 	echo ""
@@ -213,7 +212,7 @@ function installWireGuard() {
 	mkdir /etc/wireguard >/dev/null 2>&1
 
 	chmod 600 -R /etc/wireguard/
-
+    echo "SERVER_NAME=${SERVER_NAME}" > /etc/wireguard/server_name.conf
 	SERVER_PRIV_KEY=$(wg genkey)
 	SERVER_PUB_KEY=$(echo "${SERVER_PRIV_KEY}" | wg pubkey)
 
