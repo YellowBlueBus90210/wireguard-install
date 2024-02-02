@@ -1,70 +1,35 @@
-# WireGuard installer
+# WireGuard installation script (Forked Version)
 
-![Lint](https://github.com/angristan/wireguard-install/workflows/Lint/badge.svg)
-[![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/angristan)
+This repository is a fork of [WireGuard Install Script](https://github.com/angristan/wireguard-install) aimed at providing additional features and customizations for specific use cases such as facilitating the deployment of WireGuard across multiple servers by automating server-specific configurations. All credit for the original work goes to the authors of the [original WireGuard Install Script](https://github.com/angristan/wireguard-install).
 
-**This project is a bash script that aims to setup a [WireGuard](https://www.wireguard.com/) VPN on a Linux server, as easily as possible!**
+## Modifications
 
-WireGuard is a point-to-point VPN that can be used in different ways. Here, we mean a VPN as in: the client will forward all its traffic through an encrypted tunnel to the server.
-The server will apply NAT to the client's traffic so it will appear as if the client is browsing the web with the server's IP.
+- **Custom Installation Script to Prompt for Server Name**: Enhances setup efficiency by automatically incorporating server names into configuration file names, thus eliminating manual renaming and reducing setup errors.
+- **Output Files Naming Convention**: Configuration files are now named following the `serverName-clientName.conf` convention to streamline identification and management of multiple server configurations.
 
-The script supports both IPv4 and IPv6. Please check the [issues](https://github.com/angristan/wireguard-install/issues) for ongoing development, bugs and planned features! You might also want to check the [discussions](https://github.com/angristan/wireguard-install/discussions) for help.
+## Important Notice
+This fork has been customized to streamline the setup process for multiple WireGuard servers by automating the inclusion of server names in the configuration file names. Please note that this modification eliminates the interface name from the output file names. As a result, this script is optimized for scenarios where a single WireGuard interface per server is sufficient. If your deployment requires multiple WireGuard interfaces on the same server, with distinct configurations, this version of the script may not support that use case directly.
 
-WireGuard does not fit your environment? Check out [openvpn-install](https://github.com/angristan/openvpn-install).
-
-## Requirements
-
-Supported distributions:
-
-- AlmaLinux >= 8
-- Arch Linux
-- CentOS Stream >= 8
-- Debian >= 10
-- Fedora >= 32
-- Oracle Linux
-- Rocky Linux >= 8
-- Ubuntu >= 18.04
-
+This change was made to simplify management for users typically deploying a single interface per server but may limit flexibility for more complex setups. If you need to manage multiple interfaces on the same server, additional manual adjustments will be necessary to differentiate the configuration files appropriately.
 ## Usage
-
 Download and execute the script. Answer the questions asked by the script and it will take care of the rest.
 
 ```bash
-curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
+curl -O https://raw.githubusercontent.com/YellowBlueBus90210/wireguard-install/master/wireguard-install.sh
 chmod +x wireguard-install.sh
 ./wireguard-install.sh
 ```
 
-It will install WireGuard (kernel module and tools) on the server, configure it, create a systemd service and a client configuration file.
+This will install WireGuard (kernel module and tools) on the server, configure it, create a systemd service, and generate a client configuration file. To add or remove clients, simply run the script again.
 
-Run the script again to add or remove clients!
+## Acknowledgments
 
-## Providers
-
-I recommend these cheap cloud providers for your VPN server:
-
-- [Vultr](https://www.vultr.com/?ref=8948982-8H): Worldwide locations, IPv6 support, starting at \$5/month
-- [Hetzner](https://hetzner.cloud/?ref=ywtlvZsjgeDq): Germany, Finland and USA. IPv6, 20 TB of traffic, starting at 4.5€/month
-- [Digital Ocean](https://m.do.co/c/ed0ba143fe53): Worldwide locations, IPv6 support, starting at \$4/month
+Thank you to the creators and contributors of the [original WireGuard Install Script](https://github.com/angristan/wireguard-install) for their foundational work.
 
 ## Contributing
 
-## Discuss changes
+Contributions to this fork are welcome. Please submit a pull request or create an issue for any features or fixes you'd like to propose.
 
-Please open an issue before submitting a PR if you want to discuss a change, especially if it's a big one.
+## License
 
-### Code formatting
-
-We use [shellcheck](https://github.com/koalaman/shellcheck) and [shfmt](https://github.com/mvdan/sh) to enforce bash styling guidelines and good practices. They are executed for each commit / PR with GitHub Actions, so you can check the configuration [here](https://github.com/angristan/wireguard-install/blob/master/.github/workflows/lint.yml).
-
-## Say thanks
-
-You can [say thanks](https://saythanks.io/to/angristan) if you want!
-
-## Credits & Licence
-
-This project is under the [MIT Licence](https://raw.githubusercontent.com/angristan/wireguard-install/master/LICENSE)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=angristan/wireguard-install&type=Date)](https://star-history.com/#angristan/wireguard-install&Date)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

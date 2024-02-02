@@ -103,8 +103,11 @@ function initialCheck() {
 
 function installQuestions() {
 	echo "Welcome to the WireGuard installer!"
-	echo "The git repository is available at: https://github.com/angristan/wireguard-install"
+	echo "The git repository is available at: https://github.com/YellowBlueBus90210/wireguard-install"
 	echo ""
+    echo "Please enter the name of the server. This will be used in the naming of output files."
+    read -rp "Server name: " -e SERVER_NAME
+    echo "SERVER_NAME=${SERVER_NAME}" > /etc/wireguard/server_name.conf
 	echo "I need to ask you a few questions before starting the setup."
 	echo "You can keep the default options and just press enter if you are ok with them."
 	echo ""
@@ -351,7 +354,7 @@ function newClient() {
 	CLIENT_PRE_SHARED_KEY=$(wg genpsk)
 
 	HOME_DIR=$(getHomeDirForClient "${CLIENT_NAME}")
-
+    CONFIG_FILE="${HOME_DIR}/${SERVER_NAME}-${CLIENT_NAME}.conf"
 	# Create client file and add the server as a peer
 	echo "[Interface]
 PrivateKey = ${CLIENT_PRIV_KEY}
@@ -362,7 +365,7 @@ DNS = ${CLIENT_DNS_1},${CLIENT_DNS_2}
 PublicKey = ${SERVER_PUB_KEY}
 PresharedKey = ${CLIENT_PRE_SHARED_KEY}
 Endpoint = ${ENDPOINT}
-AllowedIPs = ${ALLOWED_IPS}" >"${HOME_DIR}/${SERVER_WG_NIC}-client-${CLIENT_NAME}.conf"
+AllowedIPs = ${ALLOWED_IPS}" >"${CONFIG_FILE}"
 
 	# Add the client as a peer to the server
 	echo -e "\n### Client ${CLIENT_NAME}
@@ -376,11 +379,11 @@ AllowedIPs = ${CLIENT_WG_IPV4}/32,${CLIENT_WG_IPV6}/128" >>"/etc/wireguard/${SER
 	# Generate QR code if qrencode is installed
 	if command -v qrencode &>/dev/null; then
 		echo -e "${GREEN}\nHere is your client config file as a QR Code:\n${NC}"
-		qrencode -t ansiutf8 -l L <"${HOME_DIR}/${SERVER_WG_NIC}-client-${CLIENT_NAME}.conf"
+		qrencode -t ansiutf8 -l L <"${CONFIG_FILE}"
 		echo ""
 	fi
 
-	echo -e "${GREEN}Your client config file is in ${HOME_DIR}/${SERVER_WG_NIC}-client-${CLIENT_NAME}.conf${NC}"
+	echo -e "${GREEN}Your client config file is in ${CONFIG_FILE}"
 }
 
 function listClients() {
@@ -421,7 +424,8 @@ function revokeClient() {
 
 	# remove generated client file
 	HOME_DIR=$(getHomeDirForClient "${CLIENT_NAME}")
-	rm -f "${HOME_DIR}/${SERVER_WG_NIC}-client-${CLIENT_NAME}.conf"
+    CONFIG_FILE="${HOME_DIR}/${SERVER_NAME}-${CLIENT_NAME}.conf"
+	rm -f "${CONFIG_FILE}"
 
 	# restart wireguard to apply changes
 	wg syncconf "${SERVER_WG_NIC}" <(wg-quick strip "${SERVER_WG_NIC}")
@@ -485,7 +489,15 @@ function uninstallWg() {
 
 function manageMenu() {
 	echo "Welcome to WireGuard-install!"
-	echo "The git repository is available at: https://github.com/angristan/wireguard-install"
+	echo "The git repository is available at: https://github.com/YellowBlueBus90210/wireguard-install"
+    if [[ -f /etc/wireguard/server_name.conf ]]; then
+        source /etc/wireguard/server_name.conf
+    else
+        echo "Server name configuration not found. Please run the installation again."
+        exit 1
+    fi
+
+    
 	echo ""
 	echo "It looks like WireGuard is already installed."
 	echo ""
